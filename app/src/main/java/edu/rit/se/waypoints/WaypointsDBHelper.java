@@ -44,14 +44,14 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
     // CRUD Operations
 
     //TODO pass in a Waypoint object and get values from that
-    public void addWaypoint(){
+    public void addWaypoint(Waypoint waypoint){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(WaypointsTable.WAYPOINT_NAME, "One");
-        values.put(WaypointsTable.LATITUDE, 42.391009);
-        values.put(WaypointsTable.LONGITUDE, -77.695313);
-        values.put(WaypointsTable.COLOR, "3de45634");
+        values.put(WaypointsTable.WAYPOINT_NAME, waypoint.getName());
+        values.put(WaypointsTable.LATITUDE, waypoint.getLatitude());
+        values.put(WaypointsTable.LONGITUDE, waypoint.getLongitude());
+        values.put(WaypointsTable.COLOR, waypoint.getColor());
 
         db.insert(WaypointsTable.TABLE_NAME, null, values);
 
@@ -59,45 +59,53 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
     }
 
     //TODO rewrite to return Waypoint object
-    public String getWaypoint(String waypointName){
+    public Waypoint getWaypoint(String waypointName){
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(
                 WaypointsTable.TABLE_NAME,
                 null,
                 WaypointsTable.WAYPOINT_NAME + "=?",
-                new String[]{waypointName},
+                new String[]{ waypointName },
                 null,
                 null,
                 null,
                 null
         );
 
-        if(cursor != null){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
+            Waypoint waypoint = new Waypoint(cursor.getString(0), waypointName);
+            waypoint.setLatitude(cursor.getDouble(2));
+            waypoint.setLongitude(cursor.getDouble(3));
+            waypoint.setColor(cursor.getString(4));
 
-            return cursor.getString(0);
+
+            return waypoint;
         }
 
         db.close();
 
-        return "";
+        return null;
     }
 
     //TODO rewrite to return Waypoint objects
-    public ArrayList<String> getAllWaypoints(){
-        ArrayList<String> waypoints = new ArrayList<String>();
+    public ArrayList<Waypoint> getAllWaypoints(){
+        ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
 
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + WaypointsTable.TABLE_NAME;
 
         Cursor cursor = db.rawQuery(query, null);
 
-        if(cursor != null){
-            cursor.moveToFirst();
+        if(cursor.moveToFirst()){
 
             do{
-                waypoints.add(cursor.getString(0));
+                Waypoint waypoint = new Waypoint(cursor.getString(0), cursor.getString(1));
+                waypoint.setLatitude(cursor.getDouble(2));
+                waypoint.setLongitude(cursor.getDouble(3));
+                waypoint.setColor(cursor.getString(4));
+
+                waypoints.add(waypoint);
             }while(cursor.moveToNext());
         }
 
@@ -107,17 +115,17 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
     }
 
     //TODO redo to use Waypoint object, find by waypoint id.
-    public void updateWaypoint(String waypointName){
+    public void updateWaypoint(Waypoint waypoint){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(WaypointsTable.WAYPOINT_NAME, "One");
-        values.put(WaypointsTable.LATITUDE, 42.391009);
-        values.put(WaypointsTable.LONGITUDE, -77.695313);
-        values.put(WaypointsTable.COLOR, "3de45634");
+        values.put(WaypointsTable.WAYPOINT_NAME, waypoint.getName());
+        values.put(WaypointsTable.LATITUDE, waypoint.getLatitude());
+        values.put(WaypointsTable.LONGITUDE, waypoint.getLongitude());
+        values.put(WaypointsTable.COLOR, waypoint.getColor());
 
         db.update(WaypointsTable.TABLE_NAME, values, WaypointsTable.WAYPOINT_NAME + "=?",
-                new String[] {waypointName});
+                new String[] { waypoint.getName() });
     }
 
     public void deleteWaypoint(String waypointName){
