@@ -15,5 +15,6 @@ public final class WaypointsContract {
         public static final String LATITUDE = "latitude";
         public static final String LONGITUDE = "longitude";
         public static final String COLOR = "color";
+        public static final String PICTURE = "picture";
     }
 }

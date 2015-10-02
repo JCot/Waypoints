@@ -27,6 +27,7 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
             WaypointsTable.LATITUDE + " DOUBLE, " +
             WaypointsTable.LONGITUDE + " DOUBLE, " +
             WaypointsTable.COLOR + " VARCHAR(8) " +
+            WaypointsTable.PICTURE + " TEXT, " +
             " )";
 
     public WaypointsDBHelper(Context context){

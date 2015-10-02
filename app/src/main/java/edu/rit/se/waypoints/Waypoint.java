@@ -12,7 +12,7 @@ public class Waypoint {
     private double latitude;
     private double longitude;
     private String color;
-    BitmapDrawable picture;
+    String picture;
 
     public Waypoint(String id, String name){
         this.id = id;
@@ -59,11 +59,11 @@ public class Waypoint {
         this.color = color;
     }
 
-    public BitmapDrawable getPicture(){
+    public String getPicture(){
         return picture;
     }
 
-    public void setPicture(BitmapDrawable picture){
+    public void setPicture(String picture){
         this.picture = picture;
     }
 
