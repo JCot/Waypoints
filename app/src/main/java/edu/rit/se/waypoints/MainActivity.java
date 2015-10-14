@@ -3,6 +3,7 @@ package edu.rit.se.waypoints;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,15 +14,21 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     static String mCurrentPhotoPath;
+    GoogleApiClient mGoogleApiClient;
+    WaypointsDBHelper dbHelper;
 
 
     @Override
@@ -33,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         ImageView myImage = new ImageView(this);
         myImage.setImageBitmap(myBitmap);
         setContentView(R.layout.activity_main);
+
+        buildGoogleApiClient();
+        dbHelper = new WaypointsDBHelper(this);
     }
 
     @Override
@@ -121,5 +131,45 @@ public class MainActivity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    public Location getCurrentLocation(){
+        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    }
+
+    public void saveWaypoint(String name){
+        Location location = getCurrentLocation();
+        Waypoint waypoint = new Waypoint(name);
+
+        if(location != null) {
+            waypoint.setLatitude(location.getLatitude());
+            waypoint.setLongitude(location.getLongitude());
+        }
+
+        dbHelper.addWaypoint(waypoint);
     }
 }
