@@ -75,7 +75,7 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
         );
 
         if(cursor.moveToFirst()){
-            Waypoint waypoint = new Waypoint(cursor.getString(0), waypointName);
+            Waypoint waypoint = new Waypoint(waypointName);
             waypoint.setLatitude(cursor.getDouble(2));
             waypoint.setLongitude(cursor.getDouble(3));
             waypoint.setColor(cursor.getString(4));
@@ -101,7 +101,7 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
         if(cursor.moveToFirst()){
 
             do{
-                Waypoint waypoint = new Waypoint(cursor.getString(0), cursor.getString(1));
+                Waypoint waypoint = new Waypoint(cursor.getString(1));
                 waypoint.setLatitude(cursor.getDouble(2));
                 waypoint.setLongitude(cursor.getDouble(3));
                 waypoint.setColor(cursor.getString(4));
