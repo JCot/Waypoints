@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.location.Location;
 import android.location.LocationManager;
 
-public class LocationActivity extends AppCompatActivity {
+public class SaveLocationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
