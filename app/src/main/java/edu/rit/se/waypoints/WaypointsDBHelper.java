@@ -26,7 +26,7 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
             WaypointsTable.WAYPOINT_NAME + " TEXT UNIQUE, " +
             WaypointsTable.LATITUDE + " DOUBLE, " +
             WaypointsTable.LONGITUDE + " DOUBLE, " +
-            WaypointsTable.COLOR + " VARCHAR(8) " +
+            WaypointsTable.COLOR + " VARCHAR(8), " +
             WaypointsTable.PICTURE + " TEXT, " +
             " )";
 
