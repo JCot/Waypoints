@@ -65,7 +65,8 @@ public class SaveLocationActivity extends AppCompatActivity implements GoogleApi
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        boolean connected = mGoogleApiClient.isConnected();
+        System.out.println("Connected: " + connected);
     }
 
     @Override
@@ -85,6 +86,8 @@ public class SaveLocationActivity extends AppCompatActivity implements GoogleApi
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        mGoogleApiClient.connect();
     }
 
     public Location getCurrentLocation(){
