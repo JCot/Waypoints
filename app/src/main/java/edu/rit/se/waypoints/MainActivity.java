@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
@@ -26,11 +27,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+
 
     static String mCurrentPhotoPath;
     GoogleApiClient mGoogleApiClient;
-    WaypointsDBHelper dbHelper;
+    WaypointsDBHelper mDbHelper;
+    Waypoint mCurWaypoint;
+    float[] mNavArray = new float[3];
 
 
     @Override
@@ -44,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         buildGoogleApiClient();
-        dbHelper = new WaypointsDBHelper(this);
+        mDbHelper = new WaypointsDBHelper(this);
 
         Button button = (Button)findViewById(R.id.saveLocation);
         button.setOnClickListener(new View.OnClickListener() {
@@ -164,6 +168,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     }
 
+    private void calculateDistance(Location curLocation){
+        Location.distanceBetween(curLocation.getLatitude(), curLocation.getLongitude(), mCurWaypoint.getLatitude(), mCurWaypoint.getLongitude(), mNavArray);
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -175,7 +182,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mGoogleApiClient.connect();
     }
 
-    public Location getCurrentLocation(){
-        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    @Override
+    public void onLocationChanged(Location location) {
+        calculateDistance(location);
     }
 }
