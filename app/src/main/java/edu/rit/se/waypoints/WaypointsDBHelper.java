@@ -22,12 +22,12 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
     private static final int DB_VERSION = 1;
     private static final String CREATE_ENTRIES =
             "CREATE TABLE " + WaypointsTable.TABLE_NAME + " (" +
-            WaypointsTable._ID + " INTEGER PRIMARY KEY," +
+            WaypointsTable._ID + " INTEGER PRIMARY KEY, " +
             WaypointsTable.WAYPOINT_NAME + " TEXT UNIQUE, " +
             WaypointsTable.LATITUDE + " DOUBLE, " +
             WaypointsTable.LONGITUDE + " DOUBLE, " +
-            WaypointsTable.COLOR + " VARCHAR(8) " +
-            WaypointsTable.PICTURE + " TEXT, " +
+            WaypointsTable.COLOR + " VARCHAR(8), " +
+            WaypointsTable.PICTURE + " TEXT" +
             " )";
 
     public WaypointsDBHelper(Context context){

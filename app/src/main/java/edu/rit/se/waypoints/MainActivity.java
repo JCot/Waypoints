@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,19 +46,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         buildGoogleApiClient();
         dbHelper = new WaypointsDBHelper(this);
 
-        Button saveButton = (Button)findViewById(R.id.Transition);
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        Button button = (Button)findViewById(R.id.saveLocation);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    moveToSave();
-                }
+                goToSaveLocation();
+            }
         });
-
-
     }
 
-    private void moveToSave(){
-        Intent intent = new Intent(this,SaveLocationActivity.class);
+    private void goToSaveLocation(){
+        Intent intent = new Intent(this, SaveLocationActivity.class);
+
         startActivity(intent);
     }
 
@@ -173,10 +171,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        mGoogleApiClient.connect();
     }
 
     public Location getCurrentLocation(){
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
-
 }
