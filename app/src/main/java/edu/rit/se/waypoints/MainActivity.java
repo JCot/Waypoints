@@ -11,6 +11,9 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -43,6 +46,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         buildGoogleApiClient();
         dbHelper = new WaypointsDBHelper(this);
+
+        Button saveButton = (Button)findViewById(R.id.Transition);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    moveToSave();
+                }
+        });
+
+
+    }
+
+    private void moveToSave(){
+        Intent intent = new Intent(this,SaveLocationActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -161,15 +179,4 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
-    public void saveWaypoint(String name){
-        Location location = getCurrentLocation();
-        Waypoint waypoint = new Waypoint(name);
-
-        if(location != null) {
-            waypoint.setLatitude(location.getLatitude());
-            waypoint.setLongitude(location.getLongitude());
-        }
-
-        dbHelper.addWaypoint(waypoint);
-    }
 }
