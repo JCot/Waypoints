@@ -12,6 +12,28 @@
         android:id="@+id/saveLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Location"/>
+        android:text="Save Location"
+        android:layout_margin="@dimen/activity_horizontal_margin"/>
+
+    <TextView
+        android:id="@+id/navWaypointName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/saveLocation"
+        android:layout_margin="@dimen/activity_horizontal_margin"/>
+
+    <ImageView
+        android:id="@+id/directionArrow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/navWaypointName"
+        android:layout_margin="@dimen/activity_horizontal_margin"/>
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/directionArrow"
+        android:layout_margin="@dimen/activity_horizontal_margin"/>
 
 </RelativeLayout>

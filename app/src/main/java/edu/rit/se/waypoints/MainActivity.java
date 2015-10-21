@@ -3,6 +3,9 @@ package edu.rit.se.waypoints;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     static String mCurrentPhotoPath;
     GoogleApiClient mGoogleApiClient;
     WaypointsDBHelper mDbHelper;
-    Waypoint mCurWaypoint;
+    Waypoint mCurWaypoint = null;
     float[] mNavArray = new float[3];
 
 
@@ -169,7 +173,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void calculateDistance(Location curLocation){
-        Location.distanceBetween(curLocation.getLatitude(), curLocation.getLongitude(), mCurWaypoint.getLatitude(), mCurWaypoint.getLongitude(), mNavArray);
+        Location.distanceBetween(curLocation.getLatitude(), curLocation.getLongitude(),
+                mCurWaypoint.getLatitude(), mCurWaypoint.getLongitude(), mNavArray);
+        float distance = (float)(mNavArray[0] * 3.28084); // Convert meters to feet
+        mNavArray[0] = distance;
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -184,6 +191,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(Location location) {
-        calculateDistance(location);
+        if(mCurWaypoint != null) {
+            calculateDistance(location);
+            float distance = mNavArray[0];
+            TextView waypointNameBox = (TextView) findViewById(R.id.navWaypointName);
+            TextView distanceBox = (TextView) findViewById(R.id.distance);
+            ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
+
+            waypointNameBox.setText(mCurWaypoint.getName());
+            distanceBox.setText("" + distance);
+
+
+            Bitmap arrowBitmap = arrowView.getDrawingCache();
+            float angle = mNavArray[2] - mNavArray[1];
+            Bitmap canvasBitmap = arrowBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            canvasBitmap.eraseColor(0x00000000);
+
+            // Create canvas
+            Canvas canvas = new Canvas(canvasBitmap);
+
+            // Create rotation matrix
+            Matrix rotateMatrix = new Matrix();
+            rotateMatrix.setRotate(angle, canvas.getWidth() / 2, canvas.getHeight() / 2);
+
+            //Draw bitmap onto canvas using matrix
+            canvas.drawBitmap(arrowBitmap, rotateMatrix, null);
+
+            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));
+        }
     }
 }
