@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     WaypointsDBHelper mDbHelper;
     Waypoint mCurWaypoint = null;
     float[] mNavArray = new float[3];
-
+    ArrayList<Waypoint> mAllWaypoints;
+    int mCurWaypointIndex = 0;
+    int mMaxWaypointIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +64,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 goToSaveLocation();
             }
         });
+
+        mAllWaypoints = mDbHelper.getAllWaypoints();
+
+        if(!mAllWaypoints.isEmpty()){
+            mCurWaypoint = mAllWaypoints.get(0);
+            mMaxWaypointIndex = mAllWaypoints.size() - 1;
+        }
     }
 
     private void goToSaveLocation(){
         Intent intent = new Intent(this, SaveLocationActivity.class);
 
         startActivity(intent);
+    }
+
+    private void changeWaypoint(){
+        if(mCurWaypointIndex + 1 < mMaxWaypointIndex) {
+            mCurWaypointIndex++;
+        }
+        else{
+            mCurWaypointIndex = 0;
+        }
+        
+        mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
     }
 
     @Override
