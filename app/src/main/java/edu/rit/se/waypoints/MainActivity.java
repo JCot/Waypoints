@@ -1,5 +1,6 @@
 package edu.rit.se.waypoints;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     ArrayList<Waypoint> mAllWaypoints;
     int mCurWaypointIndex = 0;
     int mMaxWaypointIndex = 0;
+    LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         buildGoogleApiClient();
+        createLocationRequest();
         mDbHelper = new WaypointsDBHelper(this);
 
         Button button = (Button)findViewById(R.id.saveLocation);
@@ -65,10 +70,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        mAllWaypoints = mDbHelper.getAllWaypoints();
+//        mAllWaypoints = mDbHelper.getAllWaypoints();
+//
+//        if(!mAllWaypoints.isEmpty()){
+//            mCurWaypoint = mAllWaypoints.get(0);
+//            mMaxWaypointIndex = mAllWaypoints.size() - 1;
+//        }
+    }
 
-        if(!mAllWaypoints.isEmpty()){
-            mCurWaypoint = mAllWaypoints.get(0);
+    @Override
+    protected void onStart(){
+
+        super.onStart();
+
+        mAllWaypoints = mDbHelper.getAllWaypoints();
+        if(!mAllWaypoints.isEmpty()) {
+            mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
             mMaxWaypointIndex = mAllWaypoints.size() - 1;
         }
     }
@@ -180,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        startLocationUpdates();
     }
 
     @Override
@@ -210,6 +227,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mGoogleApiClient.connect();
     }
 
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if(mCurWaypoint != null) {
@@ -217,13 +246,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             float distance = mNavArray[0];
             TextView waypointNameBox = (TextView) findViewById(R.id.navWaypointName);
             TextView distanceBox = (TextView) findViewById(R.id.distance);
-            ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
+            //ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
 
             waypointNameBox.setText(mCurWaypoint.getName());
             distanceBox.setText("" + distance);
 
 
-            Bitmap arrowBitmap = arrowView.getDrawingCache();
+            /*Bitmap arrowBitmap = arrowView.getDrawingCache();
             float angle = mNavArray[2] - mNavArray[1];
             Bitmap canvasBitmap = arrowBitmap.copy(Bitmap.Config.ARGB_8888, true);
             canvasBitmap.eraseColor(0x00000000);
@@ -238,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             //Draw bitmap onto canvas using matrix
             canvas.drawBitmap(arrowBitmap, rotateMatrix, null);
 
-            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));
+            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));*/
         }
     }
 }
