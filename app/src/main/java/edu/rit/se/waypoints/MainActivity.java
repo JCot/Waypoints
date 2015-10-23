@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         else{
             mCurWaypointIndex = 0;
         }
-        
+
         mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
     }
 
