@@ -44,7 +44,6 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
 
     // CRUD Operations
 
-    //TODO pass in a Waypoint object and get values from that
     public void addWaypoint(Waypoint waypoint){
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -59,7 +58,6 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
         db.close();
     }
 
-    //TODO rewrite to return Waypoint object
     public Waypoint getWaypoint(String waypointName){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -89,7 +87,6 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
         return null;
     }
 
-    //TODO rewrite to return Waypoint objects
     public ArrayList<Waypoint> getAllWaypoints(){
         ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
 
@@ -115,7 +112,6 @@ public class WaypointsDBHelper extends SQLiteOpenHelper{
         return waypoints;
     }
 
-    //TODO redo to use Waypoint object, find by waypoint id.
     public void updateWaypoint(Waypoint waypoint){
         SQLiteDatabase db = this.getWritableDatabase();
 

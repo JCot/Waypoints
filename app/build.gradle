@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 'Vuzix Corporation:Vuzix M100 Add-On:15'
     buildToolsVersion '22.0.1'
 
     defaultConfig {
         applicationId "edu.rit.se.waypoints"
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 15
         versionCode 1
         versionName "1.0"
     }

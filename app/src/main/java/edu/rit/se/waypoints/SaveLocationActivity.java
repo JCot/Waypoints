@@ -1,6 +1,7 @@
 package edu.rit.se.waypoints;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,8 +38,15 @@ public class SaveLocationActivity extends AppCompatActivity implements GoogleApi
                 String name = nameField.getText().toString();
 
                 saveWaypoint(name);
+                returnToHome();
             }
         });
+    }
+
+    private void returnToHome(){
+        Intent intent = new Intent(this, MainActivity.class);
+
+        startActivity(intent);
     }
 
     @Override
