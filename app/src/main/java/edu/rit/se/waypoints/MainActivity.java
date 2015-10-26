@@ -246,13 +246,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             float distance = mNavArray[0];
             TextView waypointNameBox = (TextView) findViewById(R.id.navWaypointName);
             TextView distanceBox = (TextView) findViewById(R.id.distance);
-            //ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
+            ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
 
             waypointNameBox.setText(mCurWaypoint.getName());
             distanceBox.setText("" + distance);
 
 
-            /*Bitmap arrowBitmap = arrowView.getDrawingCache();
+            Bitmap arrowBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrow);
             float angle = mNavArray[2] - mNavArray[1];
             Bitmap canvasBitmap = arrowBitmap.copy(Bitmap.Config.ARGB_8888, true);
             canvasBitmap.eraseColor(0x00000000);
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             //Draw bitmap onto canvas using matrix
             canvas.drawBitmap(arrowBitmap, rotateMatrix, null);
 
-            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));*/
+            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));
         }
     }
 }
