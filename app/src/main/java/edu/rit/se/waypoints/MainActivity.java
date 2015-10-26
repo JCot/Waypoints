@@ -1,9 +1,14 @@
 package edu.rit.se.waypoints;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,16 +19,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -33,9 +41,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     static String mCurrentPhotoPath;
     GoogleApiClient mGoogleApiClient;
     WaypointsDBHelper mDbHelper;
-    Waypoint mCurWaypoint;
+    Waypoint mCurWaypoint = null;
     float[] mNavArray = new float[3];
-
+    ArrayList<Waypoint> mAllWaypoints;
+    int mCurWaypointIndex = 0;
+    int mMaxWaypointIndex = 0;
+    LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         buildGoogleApiClient();
+        createLocationRequest();
         mDbHelper = new WaypointsDBHelper(this);
 
         Button button = (Button)findViewById(R.id.saveLocation);
@@ -57,12 +69,44 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 goToSaveLocation();
             }
         });
+
+
+        Button next = (Button)findViewById(R.id.nextWaypoint);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeWaypoint();
+            }
+        });
+    }
+
+    @Override
+    protected void onStart(){
+
+        super.onStart();
+
+        mAllWaypoints = mDbHelper.getAllWaypoints();
+        if(!mAllWaypoints.isEmpty()) {
+            mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
+            mMaxWaypointIndex = mAllWaypoints.size() - 1;
+        }
     }
 
     private void goToSaveLocation(){
         Intent intent = new Intent(this, SaveLocationActivity.class);
 
         startActivity(intent);
+    }
+
+    private void changeWaypoint(){
+        if(mCurWaypointIndex + 1 <= mMaxWaypointIndex) {
+            mCurWaypointIndex++;
+        }
+        else{
+            mCurWaypointIndex = 0;
+        }
+
+        mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
     }
 
     @Override
@@ -155,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        startLocationUpdates();
     }
 
     @Override
@@ -169,7 +213,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void calculateDistance(Location curLocation){
-        Location.distanceBetween(curLocation.getLatitude(), curLocation.getLongitude(), mCurWaypoint.getLatitude(), mCurWaypoint.getLongitude(), mNavArray);
+        Location.distanceBetween(curLocation.getLatitude(), curLocation.getLongitude(),
+                mCurWaypoint.getLatitude(), mCurWaypoint.getLongitude(), mNavArray);
+        float distance = (float)(mNavArray[0] * 3.28084); // Convert meters to feet
+        mNavArray[0] = distance;
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -182,8 +229,47 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mGoogleApiClient.connect();
     }
 
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
-        calculateDistance(location);
+        if(mCurWaypoint != null) {
+            calculateDistance(location);
+            float distance = mNavArray[0];
+            TextView waypointNameBox = (TextView) findViewById(R.id.navWaypointName);
+            TextView distanceBox = (TextView) findViewById(R.id.distance);
+            ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
+
+            waypointNameBox.setText(mCurWaypoint.getName());
+            distanceBox.setText("" + distance);
+
+
+            Bitmap arrowBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrow);
+            float angle = mNavArray[2] - mNavArray[1];
+            Bitmap canvasBitmap = arrowBitmap.copy(Bitmap.Config.ARGB_8888, true);
+            canvasBitmap.eraseColor(0x00000000);
+
+            // Create canvas
+            Canvas canvas = new Canvas(canvasBitmap);
+
+            // Create rotation matrix
+            Matrix rotateMatrix = new Matrix();
+            rotateMatrix.setRotate(angle, canvas.getWidth() / 2, canvas.getHeight() / 2);
+
+            //Draw bitmap onto canvas using matrix
+            canvas.drawBitmap(arrowBitmap, rotateMatrix, null);
+
+            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));
+        }
     }
 }
