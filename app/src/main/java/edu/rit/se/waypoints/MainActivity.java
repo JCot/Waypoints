@@ -70,15 +70,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-//        mAllWaypoints = mDbHelper.getAllWaypoints();
-//
-//        if(!mAllWaypoints.isEmpty()){
-//            mCurWaypoint = mAllWaypoints.get(0);
-//            mMaxWaypointIndex = mAllWaypoints.size() - 1;
-//        }
 
         Button next = (Button)findViewById(R.id.nextWaypoint);
-        button.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 changeWaypoint();
