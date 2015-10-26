@@ -76,6 +76,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 //            mCurWaypoint = mAllWaypoints.get(0);
 //            mMaxWaypointIndex = mAllWaypoints.size() - 1;
 //        }
+
+        Button next = (Button)findViewById(R.id.nextWaypoint);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeWaypoint();
+            }
+        });
     }
 
     @Override
@@ -97,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void changeWaypoint(){
-        if(mCurWaypointIndex + 1 < mMaxWaypointIndex) {
+        if(mCurWaypointIndex + 1 <= mMaxWaypointIndex) {
             mCurWaypointIndex++;
         }
         else{
