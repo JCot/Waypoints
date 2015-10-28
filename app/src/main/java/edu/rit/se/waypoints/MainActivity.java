@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
         mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
+
+        TextView waypointNameBox = (TextView) findViewById(R.id.navWaypointName);
+        waypointNameBox.setText(mCurWaypoint.getName());
     }
 
     @Override
@@ -253,23 +256,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             waypointNameBox.setText(mCurWaypoint.getName());
             distanceBox.setText("" + distance);
 
-
-            Bitmap arrowBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.arrow);
             float angle = mNavArray[2] - mNavArray[1];
-            Bitmap canvasBitmap = arrowBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            canvasBitmap.eraseColor(0x00000000);
-
-            // Create canvas
-            Canvas canvas = new Canvas(canvasBitmap);
 
             // Create rotation matrix
             Matrix rotateMatrix = new Matrix();
-            rotateMatrix.setRotate(angle, canvas.getWidth() / 2, canvas.getHeight() / 2);
-
-            //Draw bitmap onto canvas using matrix
-            canvas.drawBitmap(arrowBitmap, rotateMatrix, null);
-
-            arrowView.setImageDrawable(new BitmapDrawable(this.getResources(), canvasBitmap));
+            arrowView.setScaleType(ImageView.ScaleType.MATRIX);
+            //TODO get appropriate rotation point;
+            rotateMatrix.postRotate(angle, 0, 0);
         }
     }
 }
