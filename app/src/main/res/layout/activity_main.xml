@@ -30,26 +30,49 @@
                 android:layout_below="@+id/saveLocation"
                 android:layout_margin="@dimen/activity_horizontal_margin"/>
 
-            <ImageView
-                android:id="@+id/directionArrow"
+            <!--<ImageView-->
+                <!--android:id="@+id/directionArrow"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_below="@+id/navWaypointName"-->
+                <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+                <!--android:src="@drawable/arrow"/>-->
+            <TextView
+                android:id="@+id/warmer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/navWaypointName"
-                android:layout_margin="@dimen/activity_horizontal_margin"
-                android:src="@drawable/arrow"/>
+                android:text="Warmer"
+                android:textColor="#ff0000"
+                android:textSize="24sp"
+                android:visibility="invisible"
+                android:layout_below="@+id/navWaypointName"/>
+            <TextView
+                android:id="@+id/colder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Colder"
+                android:textColor="#0000ff"
+                android:textSize="24sp"
+                android:visibility="invisible"
+                android:layout_below="@+id/warmer"/>
 
             <TextView
                 android:id="@+id/distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/directionArrow"
+                android:layout_below="@+id/colder"
                 android:layout_margin="@dimen/activity_horizontal_margin"/>
+            <TextView
+                android:id="@+id/eta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/distance"/>
 
             <Button
                 android:id="@+id/nextWaypoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/distance"
+                android:layout_below="@+id/eta"
                 android:text="Next Waypoint"/>
 
         </RelativeLayout>

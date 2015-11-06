@@ -1,14 +1,11 @@
 package edu.rit.se.waypoints;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -47,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     int mCurWaypointIndex = 0;
     int mMaxWaypointIndex = 0;
     LocationRequest mLocationRequest;
+    private float currentHeading = 0f;
+    int prevMeasureTime = 0;
+    float prevDistance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         startActivity(intent);
     }
 
-    private void changeWaypoint(){
+    public void changeWaypoint(){
         if(mCurWaypointIndex + 1 <= mMaxWaypointIndex) {
             mCurWaypointIndex++;
         }
@@ -234,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -244,25 +246,71 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 mGoogleApiClient, mLocationRequest, this);
     }
 
+    private float caclulateSpeed(float distance){
+        float distanceTraveled = Math.abs(distance - prevDistance);
+
+        Calendar cal = Calendar.getInstance();
+        int time = (int)System.currentTimeMillis();
+        int timeElapsed = (time - prevMeasureTime)/1000;
+
+        prevMeasureTime = time;
+
+        float speed = distanceTraveled/timeElapsed;
+
+        return speed;
+    }
+
+    private float calculateEta(float speed, float distance){
+        float eta = distance/speed;
+
+        return eta;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if(mCurWaypoint != null) {
             calculateDistance(location);
             float distance = mNavArray[0];
+            float speed = caclulateSpeed(distance);
+            float eta = calculateEta(speed, distance);
             TextView waypointNameBox = (TextView) findViewById(R.id.navWaypointName);
             TextView distanceBox = (TextView) findViewById(R.id.distance);
-            ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
+            TextView etaView = (TextView)findViewById(R.id.eta);
+            //ImageView arrowView = (ImageView)findViewById(R.id.directionArrow);
 
             waypointNameBox.setText(mCurWaypoint.getName());
             distanceBox.setText("" + distance);
+            etaView.setText(String.valueOf(eta));
 
-            float angle = mNavArray[2] - mNavArray[1];
+
+            TextView warmerView = (TextView)findViewById(R.id.warmer);
+            TextView colderView = (TextView)findViewById(R.id.colder);
+            if(prevDistance > distance){
+                warmerView.setVisibility(View.VISIBLE);
+                colderView.setVisibility(View.INVISIBLE);
+            }
+
+            else if(prevDistance < distance){
+                warmerView.setVisibility(View.INVISIBLE);
+                colderView.setVisibility(View.VISIBLE);
+            }
+
+            prevDistance = distance;
+
+            //Location waypoint = new Location("GPS");
+            //waypoint.setLongitude(mCurWaypoint.getLongitude());
+            //waypoint.setLatitude(mCurWaypoint.getLatitude());
+            //float a1 = location.getBearing();
+            //float a2 = mNavArray[2];
+
+            //float angle = Math.min((a1-a2)<0?a1-a2+360:a1-a2, (a2-a1)<0?a2-a1+360:a2-a1);
 
             // Create rotation matrix
-            Matrix rotateMatrix = new Matrix();
-            arrowView.setScaleType(ImageView.ScaleType.MATRIX);
+            //Matrix rotateMatrix = new Matrix();
+            //arrowView.setScaleType(ImageView.ScaleType.MATRIX);
             //TODO get appropriate rotation point;
-            rotateMatrix.postRotate(angle, 0, 0);
+            //rotateMatrix.postRotate(angle, 0, 0);
+            //arrowView.setImageMatrix(rotateMatrix);
         }
     }
 }
