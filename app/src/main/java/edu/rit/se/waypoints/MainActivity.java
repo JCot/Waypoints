@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private float currentHeading = 0f;
     int prevMeasureTime = 0;
     float prevDistance;
+    mySensor mSensor;
 
 
     @Override
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 changeWaypoint();
             }
         });
+
+        mSensor = new mySensor(this);
     }
 
     @Override

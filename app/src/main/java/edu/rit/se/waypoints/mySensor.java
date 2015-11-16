@@ -1,6 +1,8 @@
 package edu.rit.se.waypoints;
 
 import android.content.Context;
+import android.content.Intent;
+import android.sax.StartElementListener;
 import android.util.Log;
 
 import com.vuzix.hardware.GestureSensor;
@@ -11,18 +13,24 @@ import com.vuzix.hardware.GestureSensor;
 public class mySensor extends GestureSensor{
 
     public static final String TAG = "SENSOR";
+    private Context context;
 
     public mySensor(Context arg0)
     {
         super(arg0);
+        context = arg0;
     }
 
     @Override
-        protected void onBackSwipe(int speed) { Log.i(TAG, "Left"); }
+    protected void onBackSwipe(int speed) { Log.i(TAG, "Left"); }
 
     @Override
-        protected void onForwardSwipe(int speed){
+    protected void onForwardSwipe(int speed){
         Log.i(TAG, "Right");
+
+        Intent intent = new Intent(context, SaveLocationActivity.class);
+
+        context.startActivity(intent);
 
     }
 
@@ -40,7 +48,7 @@ public class mySensor extends GestureSensor{
     }
 
     @Override
-        protected void onUp(int speed) { Log.i(TAG, "Up"); }
+    protected void onUp(int speed) { Log.i(TAG, "Up"); }
 
 
 }
