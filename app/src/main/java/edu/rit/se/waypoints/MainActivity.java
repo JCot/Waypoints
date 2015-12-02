@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         createLocationRequest();
         mDbHelper = new WaypointsDBHelper(this);
 
-        Button button = (Button)findViewById(R.id.saveLocation);
+        Button button = (Button) findViewById(R.id.saveLocation);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
 
 
-        Button next = (Button)findViewById(R.id.nextWaypoint);
+        Button next = (Button) findViewById(R.id.nextWaypoint);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         });
 
         mSensor = new mySensor(this);
+        mSensor.register();
     }
 
     @Override
@@ -95,6 +96,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             mCurWaypoint = mAllWaypoints.get(mCurWaypointIndex);
             mMaxWaypointIndex = mAllWaypoints.size() - 1;
         }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        mSensor.unregister();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mSensor.register();
     }
 
     private void goToSaveLocation(){
