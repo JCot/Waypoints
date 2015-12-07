@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private float currentHeading = 0f;
     int prevMeasureTime = 0;
     float prevDistance;
-    mySensor mSensor;
+    //mySensor mSensor;
 
 
     @Override
@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        mSensor = new mySensor(this);
-        mSensor.register();
+        //mSensor = new mySensor(this);
+        //mSensor.register();
     }
 
     @Override
@@ -101,13 +101,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onPause(){
         super.onPause();
-        mSensor.unregister();
+        //mSensor.unregister();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        mSensor.register();
+        //mSensor.register();
     }
 
     private void goToSaveLocation(){

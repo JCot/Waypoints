@@ -22,7 +22,9 @@ public class mySensor extends GestureSensor{
     }
 
     @Override
-    protected void onBackSwipe(int speed) { Log.i(TAG, "Left"); }
+    protected void onBackSwipe(int speed) {
+        Log.i(TAG, "Left");
+    }
 
     @Override
     protected void onForwardSwipe(int speed){
